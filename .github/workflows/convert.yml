@@ -1,0 +1,29 @@
+name: Convert Markdown to Word
+
+on:
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: 'Tên file Markdown cần chuyển đổi (ví dụ: document.md)'
+        required: true
+        default: 'document.md'
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Convert to Docx
+        run: |
+          pandoc "${{ github.event.inputs.filename }}" -o "output.docx"
+
+      - name: Upload Word File
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-word-document
+          path: output.docx
